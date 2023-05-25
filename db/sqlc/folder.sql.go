@@ -128,7 +128,7 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 			logger.Logger(logger.LogEntry{
 				DateTime: time.Now(),
 				Level:    logger.ERROR,
-				Location: "db/sqlc/account.sql.go/ListFolders() SCOPE",
+				Location: "db/sqlc/folder.sql.go/ListFolders() SCOPE",
 				Content:  fmt.Sprint(err),
 			})
 			return nil, err
@@ -140,7 +140,7 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 		logger.Logger(logger.LogEntry{
 			DateTime: time.Now(),
 			Level:    logger.ERROR,
-			Location: "db/sqlc/account.sql.go/ListFolders() SCOPE",
+			Location: "db/sqlc/folder.sql.go/ListFolders() SCOPE",
 			Content:  fmt.Sprint(err),
 		})
 		return nil, err
@@ -149,7 +149,7 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 		logger.Logger(logger.LogEntry{
 			DateTime: time.Now(),
 			Level:    logger.ERROR,
-			Location: "db/sqlc/account.sql.go/ListFolders() SCOPE",
+			Location: "db/sqlc/folder.sql.go/ListFolders() SCOPE",
 			Content:  fmt.Sprint(err),
 		})
 		return nil, err
@@ -161,7 +161,7 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 const updateFolder = `--name: UpdateFolder :one
 UPDATE folder
 SET name = $2, access_level = $3, content = $4, tag = $5
-WHERE id = &1
+WHERE id = $1
 RETURNING id, name, access_level, content, tag
 `
 

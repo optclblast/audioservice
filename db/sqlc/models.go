@@ -9,7 +9,7 @@ type Account struct {
 	CreatedAt time.Time `json:"createdat"`
 }
 
-type RSAKeys struct {
+type RSAKey struct {
 	Owner int64  `json:"owner"`
 	Key   string `json:"key"`
 }
