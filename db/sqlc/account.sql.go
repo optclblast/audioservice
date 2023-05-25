@@ -14,15 +14,17 @@ type CreateAccountParams struct {
 	Password string `json:"password"`
 }
 
+//user data operations
+
 const createAccount = `-- name: CreateAccount :one
-						INSERT INTO account (
-							id,
-							login,
-							password
-						) VALUES (
-							$1, $2, $3
-						) RETURNING id, login
-						`
+INSERT INTO account (
+	id,
+	login,
+	password
+) VALUES (
+	$1, $2, $3
+) RETURNING id, login
+`
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, createAccount, arg.Id, arg.Login, arg.Password)
@@ -33,13 +35,21 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.Password,
 		&i.CreatedAt,
 	)
+	if err != nil {
+		logger.Logger(logger.LogEntry{
+			DateTime: time.Now(),
+			Level:    logger.INFO,
+			Location: "db/sqlc/account.sql.go/CreateAccount() SCOPE",
+			Content:  fmt.Sprint(err),
+		})
+	}
 	return i, err
 }
 
 const getAccount = `--name: GetAccount :one
-					SELECT id, login, password, created_at FROM account
-					WHERE id = $1 LIMIT 1
-					`
+SELECT id, login, password, created_at FROM account
+WHERE id = $1 LIMIT 1
+`
 
 func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, id)
@@ -50,15 +60,23 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 		&i.Password,
 		&i.CreatedAt,
 	)
+	if err != nil {
+		logger.Logger(logger.LogEntry{
+			DateTime: time.Now(),
+			Level:    logger.INFO,
+			Location: "db/sqlc/account.sql.go/GetAccount() SCOPE",
+			Content:  fmt.Sprint(err),
+		})
+	}
 	return i, err
 }
 
 const listAccounts = `--name: ListAccounts :many
-					SELECT id, login, password, created_at FROM account
-					ORDER BY id
-					LIMIT $1
-					OFFSET $2
-					`
+SELECT id, login, password, created_at FROM account
+ORDER BY id
+LIMIT $1
+OFFSET $2
+`
 
 type ListAccountsParams struct {
 	Limit  int32 `json:"limit"`
@@ -118,12 +136,12 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 	return items, nil
 }
 
-const updateAccount = `--name: UpdateAccount :exec
-						UPDATE account
-						SET login = $2
-						WHERE id = &1
-						RETURNING id, login, created_at
-						`
+const updateAccount = `--name: UpdateAccount :one
+UPDATE account
+SET login = $2
+WHERE id = &1
+RETURNING id, login, created_at
+`
 
 type UpdateAccountParams struct {
 	Id    int64  `json:"id"`
@@ -154,9 +172,9 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 }
 
 const deleteAccount = `--name: DeleteAccount :exec
-						DELETE FROM account
-						WHERE id = $i
-						`
+DELETE FROM account
+WHERE id = $1
+`
 
 func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteAccount, id)
