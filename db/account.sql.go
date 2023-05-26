@@ -20,14 +20,15 @@ const createAccount = `-- name: CreateAccount :one
 INSERT INTO account (
 	id,
 	login,
-	password
+	password,
+	created_at
 ) VALUES (
-	$1, $2, $3
-) RETURNING id, login
+	$1, $2, $3, $4
+) RETURNING id, login, password, created_at
 `
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.Id, arg.Login, arg.Password)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.Id, arg.Login, arg.Password, time.Now())
 	var i Account
 	err := row.Scan(
 		&i.Id,
