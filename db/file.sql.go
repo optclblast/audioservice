@@ -54,7 +54,7 @@ func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (File, e
 }
 
 const getFile = `-- name: GetFile :one
-SELECT id, owner, parent, name, access_level, created_at, content, tag FROM folder
+SELECT id, owner, parent, name, content, tag FROM file
 WHERE id = $1 AND owner = $2 LIMIT 1
 `
 

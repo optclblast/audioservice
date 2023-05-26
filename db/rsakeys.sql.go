@@ -77,7 +77,7 @@ type UpdateRSAKeyParams struct {
 }
 
 func (q *Queries) UpdateRSAKey(ctx context.Context, arg UpdateRSAKeyParams) (RSAKey, error) {
-	row := q.db.QueryRowContext(ctx, updateFile, arg.Owner, arg.Key)
+	row := q.db.QueryRowContext(ctx, updateRSAKey, arg.Owner, arg.Key)
 	var i RSAKey
 	err := row.Scan(
 		&i.Owner,
