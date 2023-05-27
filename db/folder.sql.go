@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -10,13 +11,13 @@ import (
 
 // operations with folders
 type CreateFolderParams struct {
-	Id          int64  `json:"id"`
-	Owner       int64  `json:"owner"`
-	Parent      int64  `json:"parent"`
-	Name        string `json:"name"`
-	AccessLevel string `json:"access_level"`
-	Content     int64  `json:"content"`
-	Tag         string `json:"tag"`
+	Id          int64         `json:"id"`
+	Owner       int64         `json:"owner"`
+	Parent      sql.NullInt64 `json:"parent"`
+	Name        string        `json:"name"`
+	AccessLevel string        `json:"access_level"`
+	Content     int64         `json:"content"`
+	Tag         string        `json:"tag"`
 }
 
 const createFolder = `-- name: CreateFolder :one
@@ -30,12 +31,13 @@ INSERT INTO folder (
 	content,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING id, owner, parent, name, accesslevel, created_at, content, tag
+	$1, $2, $3, $4, $5, $6, $7, &8
+) RETURNING id, owner, parent, name, access_level, created_at, content, tag
 `
 
 func (q *Queries) CreateFolder(ctx context.Context, arg CreateFolderParams) (Folder, error) {
-	row := q.db.QueryRowContext(ctx, createFolder, arg.Id, arg.Owner, arg.Parent, arg.Name, arg.AccessLevel, arg.Content, arg.Tag)
+	row := q.db.QueryRowContext(ctx, createFolder, arg.Id, arg.Owner, arg.Parent, arg.Name, arg.AccessLevel, time.Now(), arg.Content, arg.Tag)
+
 	var i Folder
 	err := row.Scan(
 		&i.Id,

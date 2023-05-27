@@ -28,20 +28,20 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	var id int64 = 144
+	var id int64 = 571
 	account, err := testQueries.GetAccount(context.Background(), id)
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
 	require.Equal(t, id, account.Id)
-	require.Equal(t, "qwer67", account.Login)
-	require.Equal(t, "qweq98rrte", account.Password)
+	require.Equal(t, "vjsrvazr", account.Login)
+	require.Equal(t, "cjbqkkmkbl", account.Password)
 }
 
 func TestListAccounts(t *testing.T) {
 	arg := ListAccountsParams{
-		Limit:  int32(utils.RandomInt(1, 10)),
-		Offset: int32(utils.RandomInt(1, 10)),
+		Limit:  int32(utils.RandomInt(1, 3)),
+		Offset: int32(utils.RandomInt(1, 2)),
 	}
 	accounts, err := testQueries.ListAccounts(context.Background(), arg)
 	require.NoError(t, err)
@@ -49,6 +49,6 @@ func TestListAccounts(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	err := testQueries.DeleteAccount(context.Background(), 67587907098568709)
+	err := testQueries.DeleteAccount(context.Background(), 862)
 	require.NoError(t, err)
 }
