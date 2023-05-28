@@ -12,7 +12,7 @@ import (
 func TestCreateFolder(t *testing.T) {
 	arg := CreateFolderParams{
 		Id:          utils.RandomID(),
-		Owner:       446,
+		Owner:       581,
 		Parent:      sql.NullInt64{Valid: false},
 		Name:        utils.RandomLogin(),
 		AccessLevel: "DEFAULT",

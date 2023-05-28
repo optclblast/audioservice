@@ -17,8 +17,6 @@ CREATE TABLE "folder" (
   "name" varchar NOT NULL DEFAULT 'New Folder',
   "access_level" varchar NOT NULL DEFAULT 'DEFAULT',
   "created_at" timestamp NOT NULL DEFAULT 'now()',
-  "content" bigint,
-  "tag" varchar
 );
 
 CREATE TABLE "file" (

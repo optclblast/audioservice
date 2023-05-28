@@ -31,7 +31,7 @@ INSERT INTO folder (
 	content,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7, &8
+	$1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING id, owner, parent, name, access_level, created_at, content, tag
 `
 

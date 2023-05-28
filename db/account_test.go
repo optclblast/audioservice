@@ -49,6 +49,6 @@ func TestListAccounts(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	err := testQueries.DeleteAccount(context.Background(), 862)
+	err := testQueries.DeleteAccount(context.Background(), 67587907098568709)
 	require.NoError(t, err)
 }
