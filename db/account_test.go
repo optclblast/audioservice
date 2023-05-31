@@ -28,14 +28,14 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	var id int64 = 571
+	var id int64 = 8228
 	account, err := testQueries.GetAccount(context.Background(), id)
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
 	require.Equal(t, id, account.Id)
-	require.Equal(t, "vjsrvazr", account.Login)
-	require.Equal(t, "cjbqkkmkbl", account.Password)
+	require.Equal(t, "gcpauijgsnxfyze", account.Login)
+	require.Equal(t, "snpfifyhqbnunlhkyiirtggtw", account.Password)
 }
 
 func TestListAccounts(t *testing.T) {

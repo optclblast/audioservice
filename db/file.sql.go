@@ -84,8 +84,8 @@ func (q *Queries) GetFile(ctx context.Context, id int64, owner int64) (File, err
 
 const listFiles = `--name: ListFiles :many
 SELECT id, owner, parent, name, path, tag FROM file
-ORDER BY id
 WHERE owner = $3
+ORDER BY id
 LIMIT $1
 OFFSET $2
 `
@@ -153,24 +153,23 @@ func (q *Queries) ListFiles(ctx context.Context, arg ListFilesParams, owner int6
 
 const updateFile = `--name: UpdateFile :one
 UPDATE file
-SET name = $2, tag = $3
-WHERE id = &1
-RETURNING id, name, tag
+SET name = $2, path = $3, tag = $4
+WHERE id = $1
+RETURNING id, name, path, tag
 `
 
 type UpdateFileParams struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
+	Path string `json:"path"`
 	Tag  string `json:"tag"`
 }
 
-func (q *Queries) UpdateFile(ctx context.Context, arg UpdateFileParams, owner int64) (Folder, error) {
-	row := q.db.QueryRowContext(ctx, updateFile, arg.Id, arg.Name, arg.Tag, owner)
+func (q *Queries) UpdateFile(ctx context.Context, arg UpdateFileParams) (Folder, error) {
+	row := q.db.QueryRowContext(ctx, updateFile, arg.Id, arg.Name, arg.Path, arg.Tag)
 	var i Folder
 	err := row.Scan(
 		&i.Id,
-		&i.Owner,
-		&i.Parent,
 		&i.Name,
 		&i.Path,
 		&i.Tag,

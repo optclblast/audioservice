@@ -29,13 +29,13 @@ func randomString(n int) string {
 }
 
 func RandomLogin() string {
-	return randomString(8)
+	return randomString(15)
 }
 
 func RandomPassword() string {
-	return randomString(10)
+	return randomString(25)
 }
 
 func RandomID() int64 {
-	return RandomInt(1, 1000)
+	return RandomInt(1, 10000)
 }
