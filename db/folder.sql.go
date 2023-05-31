@@ -11,13 +11,12 @@ import (
 
 // operations with folders
 type CreateFolderParams struct {
-	Id          int64         `json:"id"`
-	Owner       int64         `json:"owner"`
-	Parent      sql.NullInt64 `json:"parent"`
-	Name        string        `json:"name"`
-	AccessLevel string        `json:"access_level"`
-	Content     int64         `json:"content"`
-	Tag         string        `json:"tag"`
+	Id     int64         `json:"id"`
+	Owner  int64         `json:"owner"`
+	Parent sql.NullInt64 `json:"parent"`
+	Name   string        `json:"name"`
+	Path   string        `json:"path"`
+	Tag    string        `json:"tag"`
 }
 
 const createFolder = `-- name: CreateFolder :one
@@ -26,17 +25,16 @@ INSERT INTO folder (
 	owner,
 	parent,
 	name,
-	access_level,
 	created_at,
-	content,
+	path,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING id, owner, parent, name, access_level, created_at, content, tag
+	$1, $2, $3, $4, $5, $6, $7
+) RETURNING id, owner, parent, name, created_at, path, tag
 `
 
 func (q *Queries) CreateFolder(ctx context.Context, arg CreateFolderParams) (Folder, error) {
-	row := q.db.QueryRowContext(ctx, createFolder, arg.Id, arg.Owner, arg.Parent, arg.Name, arg.AccessLevel, time.Now(), arg.Content, arg.Tag)
+	row := q.db.QueryRowContext(ctx, createFolder, arg.Id, arg.Owner, arg.Parent, arg.Name, time.Now(), arg.Path, arg.Tag)
 
 	var i Folder
 	err := row.Scan(
@@ -44,9 +42,8 @@ func (q *Queries) CreateFolder(ctx context.Context, arg CreateFolderParams) (Fol
 		&i.Owner,
 		&i.Parent,
 		&i.Name,
-		&i.AccessLevel,
 		&i.CreatedAt,
-		&i.Content,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {
@@ -61,7 +58,7 @@ func (q *Queries) CreateFolder(ctx context.Context, arg CreateFolderParams) (Fol
 }
 
 const getFolder = `-- name: GetFolder :one
-SELECT id, owner, parent, name, access_level, created_at, content, tag FROM folder
+SELECT id, owner, parent, name, created_at, path, tag FROM folder
 WHERE id = $1 AND owner = $2 LIMIT 1
 `
 
@@ -73,9 +70,8 @@ func (q *Queries) GetFolder(ctx context.Context, id int64, owner int64) (Folder,
 		&i.Owner,
 		&i.Parent,
 		&i.Name,
-		&i.AccessLevel,
 		&i.CreatedAt,
-		&i.Content,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {
@@ -90,9 +86,9 @@ func (q *Queries) GetFolder(ctx context.Context, id int64, owner int64) (Folder,
 }
 
 const listFolders = `--name: ListFolders :many
-SELECT id, owner, parent, name, access_level, created_at, content, tag FROM folder
-ORDER BY id
+SELECT id, owner, parent, name, created_at, path, tag FROM folder
 WHERE owner = $3
+ORDER BY id
 LIMIT $1
 OFFSET $2
 `
@@ -122,9 +118,8 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 			&i.Owner,
 			&i.Parent,
 			&i.Name,
-			&i.AccessLevel,
 			&i.CreatedAt,
-			&i.Content,
+			&i.Path,
 			&i.Tag,
 		); err != nil {
 			logger.Logger(logger.LogEntry{
@@ -162,30 +157,25 @@ func (q *Queries) ListFolders(ctx context.Context, arg ListFoldersParams, owner 
 
 const updateFolder = `--name: UpdateFolder :one
 UPDATE folder
-SET name = $2, access_level = $3, content = $4, tag = $5
+SET name = $2, path = $3, tag = $4
 WHERE id = $1
-RETURNING id, name, access_level, content, tag
+RETURNING id, name, path, tag
 `
 
 type UpdateFolderParams struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name"`
-	AccessLevel string `json:"access_level"`
-	Content     int64  `json:"content"`
-	Tag         string `json:"tag"`
+	Id   int64  `json:"id"`
+	Name string `json:"name"`
+	Path string `json:"path"`
+	Tag  string `json:"tag"`
 }
 
-func (q *Queries) UpdateFolder(ctx context.Context, arg UpdateFolderParams, owner int64) (Folder, error) {
-	row := q.db.QueryRowContext(ctx, updateFolder, arg.Id, arg.Name, arg.AccessLevel, arg.Content, arg.Tag, owner)
+func (q *Queries) UpdateFolder(ctx context.Context, arg UpdateFolderParams) (Folder, error) {
+	row := q.db.QueryRowContext(ctx, updateFolder, arg.Id, arg.Name, arg.Path, arg.Tag)
 	var i Folder
 	err := row.Scan(
 		&i.Id,
-		&i.Owner,
-		&i.Parent,
 		&i.Name,
-		&i.AccessLevel,
-		&i.CreatedAt,
-		&i.Content,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {

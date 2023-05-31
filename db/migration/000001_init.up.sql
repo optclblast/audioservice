@@ -15,8 +15,9 @@ CREATE TABLE "folder" (
   "owner" bigserial,
   "parent" bigint,
   "name" varchar NOT NULL DEFAULT 'New Folder',
-  "access_level" varchar NOT NULL DEFAULT 'DEFAULT',
   "created_at" timestamp NOT NULL DEFAULT 'now()',
+  "path" varchar NOT NULL,
+  "tag" varchar
 );
 
 CREATE TABLE "file" (
@@ -24,7 +25,8 @@ CREATE TABLE "file" (
   "owner" bigserial,
   "parent" bigserial,
   "name" varchar NOT NULL DEFAULT 'New File',
-  "content" bigint NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT 'now()',
+  "path" varchar NOT NULL,
   "tag" varchar
 );
 

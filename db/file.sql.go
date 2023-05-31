@@ -10,12 +10,12 @@ import (
 
 // operations with files
 type CreateFileParams struct {
-	Id      int64  `json:"id"`
-	Owner   int64  `json:"owner"`
-	Parent  int64  `json:"parent"`
-	Name    string `json:"name"`
-	Content int64  `json:"content"`
-	Tag     string `json:"tag"`
+	Id     int64  `json:"id"`
+	Owner  int64  `json:"owner"`
+	Parent int64  `json:"parent"`
+	Name   string `json:"name"`
+	Path   string `json:"path"`
+	Tag    string `json:"tag"`
 }
 
 const createFile = `-- name: CreateFile :one
@@ -24,22 +24,24 @@ INSERT INTO file (
 	owner,
 	parent,
 	name,
-	content,
+	created_at,
+	path,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6
-) RETURNING id, owner, parent, name, content, tag
+	$1, $2, $3, $4, $5, $6, $7
+) RETURNING id, owner, parent, name, created_at, path, tag
 `
 
 func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (File, error) {
-	row := q.db.QueryRowContext(ctx, createFile, arg.Id, arg.Owner, arg.Parent, arg.Name, arg.Content, arg.Tag)
+	row := q.db.QueryRowContext(ctx, createFile, arg.Id, arg.Owner, arg.Parent, arg.Name, time.Now(), arg.Path, arg.Tag)
 	var i File
 	err := row.Scan(
 		&i.Id,
 		&i.Owner,
 		&i.Parent,
 		&i.Name,
-		&i.Content,
+		&i.CreatedAt,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {
@@ -54,7 +56,7 @@ func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (File, e
 }
 
 const getFile = `-- name: GetFile :one
-SELECT id, owner, parent, name, content, tag FROM file
+SELECT id, owner, parent, name, path, tag FROM file
 WHERE id = $1 AND owner = $2 LIMIT 1
 `
 
@@ -66,7 +68,7 @@ func (q *Queries) GetFile(ctx context.Context, id int64, owner int64) (File, err
 		&i.Owner,
 		&i.Parent,
 		&i.Name,
-		&i.Content,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {
@@ -81,7 +83,7 @@ func (q *Queries) GetFile(ctx context.Context, id int64, owner int64) (File, err
 }
 
 const listFiles = `--name: ListFiles :many
-SELECT id, owner, parent, name, content, tag FROM file
+SELECT id, owner, parent, name, path, tag FROM file
 ORDER BY id
 WHERE owner = $3
 LIMIT $1
@@ -113,7 +115,7 @@ func (q *Queries) ListFiles(ctx context.Context, arg ListFilesParams, owner int6
 			&i.Owner,
 			&i.Parent,
 			&i.Name,
-			&i.Content,
+			&i.Path,
 			&i.Tag,
 		); err != nil {
 			logger.Logger(logger.LogEntry{
@@ -170,7 +172,7 @@ func (q *Queries) UpdateFile(ctx context.Context, arg UpdateFileParams, owner in
 		&i.Owner,
 		&i.Parent,
 		&i.Name,
-		&i.Content,
+		&i.Path,
 		&i.Tag,
 	)
 	if err != nil {
