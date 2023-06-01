@@ -10,23 +10,26 @@ import (
 
 // operations with files
 type CreateRSAKeyParams struct {
+	Id    int64  `json:"id"`
 	Owner int64  `json:"owner"`
 	Key   string `json:"key"`
 }
 
 const createRSAKey = `-- name: CreateRSAKey :one
-INSERT INTO RSAKeys (
+INSERT INTO rsakeys (
+	id,
 	owner,
 	key
 ) VALUES (
-	$1, $2
-) RETURNING owner, key
+	$1, $2, $3
+) RETURNING id, owner, key
 `
 
 func (q *Queries) CreateRSAKey(ctx context.Context, arg CreateRSAKeyParams) (RSAKey, error) {
-	row := q.db.QueryRowContext(ctx, createRSAKey, arg.Owner, arg.Key)
+	row := q.db.QueryRowContext(ctx, createRSAKey, arg.Id, arg.Owner, arg.Key)
 	var i RSAKey
 	err := row.Scan(
+		&i.Id,
 		&i.Owner,
 		&i.Key,
 	)
@@ -42,15 +45,16 @@ func (q *Queries) CreateRSAKey(ctx context.Context, arg CreateRSAKeyParams) (RSA
 }
 
 const getRSAKey = `-- name: GetRSAKey :one
-SELECT key FROM RSAKey
-WHERE owner = $1 LIMIT 1
+SELECT key FROM rsakeys
+WHERE owner = $1 
+ORDER BY id
+LIMIT 1
 `
 
 func (q *Queries) GetRSAKey(ctx context.Context, owner int64) (RSAKey, error) {
 	row := q.db.QueryRowContext(ctx, getRSAKey, owner)
 	var i RSAKey
 	err := row.Scan(
-		&i.Owner,
 		&i.Key,
 	)
 	if err != nil {
@@ -65,9 +69,9 @@ func (q *Queries) GetRSAKey(ctx context.Context, owner int64) (RSAKey, error) {
 }
 
 const updateRSAKey = `--name: UpdateRSAKey :one
-UPDATE RSAKey
+UPDATE rsakeys
 SET key = $2
-WHERE owner = &1
+WHERE owner = $1
 RETURNING owner, key
 `
 
@@ -95,7 +99,7 @@ func (q *Queries) UpdateRSAKey(ctx context.Context, arg UpdateRSAKeyParams) (RSA
 }
 
 const deleteRSAKey = `--name: DeleteRSAKey :exec
-DELETE FROM RSAKey
+DELETE FROM rsakeys
 WHERE owner = $1
 `
 

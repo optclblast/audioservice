@@ -11,8 +11,8 @@ import (
 func TestCreateFile(t *testing.T) {
 	arg := CreateFileParams{
 		Id:     utils.RandomID(),
-		Owner:  711,
-		Parent: 402,
+		Owner:  6845,
+		Parent: 3373,
 		Name:   utils.RandomLogin(),
 		Path:   utils.RandomLogin(),
 		Tag:    utils.RandomLogin(),
@@ -34,7 +34,7 @@ func TestCreateFile(t *testing.T) {
 
 func TestGetFile(t *testing.T) {
 	var id int64 = 584
-	var owner int64 = 711
+	var owner int64 = 6845
 	folder, err := testQueries.GetFile(context.Background(), id, owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, folder)

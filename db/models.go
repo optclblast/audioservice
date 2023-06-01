@@ -13,6 +13,7 @@ type Account struct {
 }
 
 type RSAKey struct {
+	Id    int64  `json:"id"`
 	Owner int64  `json:"owner"`
 	Key   string `json:"key"`
 }

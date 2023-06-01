@@ -12,7 +12,7 @@ import (
 func TestCreateFolder(t *testing.T) {
 	arg := CreateFolderParams{
 		Id:     utils.RandomID(),
-		Owner:  1066,
+		Owner:  6845,
 		Parent: sql.NullInt64{Valid: false},
 		Name:   utils.RandomLogin(),
 		Path:   utils.RandomLogin(),
@@ -34,8 +34,8 @@ func TestCreateFolder(t *testing.T) {
 }
 
 func TestGetFolder(t *testing.T) {
-	var id int64 = 606
-	var owner int64 = 711
+	var id int64 = 3373
+	var owner int64 = 6845
 	folder, err := testQueries.GetFolder(context.Background(), id, owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, folder)
@@ -46,7 +46,7 @@ func TestGetFolder(t *testing.T) {
 }
 
 func TestListFolder(t *testing.T) {
-	var owner int64 = 711
+	var owner int64 = 6845
 
 	arg := ListFoldersParams{
 		Limit:  int32(utils.RandomInt(1, 3)),

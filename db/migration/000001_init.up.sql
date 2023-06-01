@@ -5,8 +5,9 @@ CREATE TABLE "account" (
   "created_at" timestamptz NOT NULL DEFAULT 'now()'
 );
 
-CREATE TABLE "RSAKeys" (
-  "owner" bigserial PRIMARY KEY,
+CREATE TABLE "rsakeys" (
+  "id" bigserial UNIQUE PRIMARY KEY,
+  "owner" bigserial,
   "key" varchar
 );
 
@@ -32,7 +33,7 @@ CREATE TABLE "file" (
 
 CREATE INDEX ON "account" ("id");
 
-CREATE INDEX ON "RSAKeys" ("owner");
+CREATE INDEX ON "rsakeys" ("owner");
 
 CREATE INDEX ON "folder" ("id");
 
@@ -48,7 +49,7 @@ CREATE INDEX ON "file" ("parent");
 
 CREATE INDEX ON "file" ("tag");
 
-ALTER TABLE "RSAKeys" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
+ALTER TABLE "rsakeys" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
 
 ALTER TABLE "folder" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
 
