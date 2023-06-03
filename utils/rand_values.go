@@ -39,3 +39,7 @@ func RandomPassword() string {
 func RandomID() int64 {
 	return RandomInt(1, 10000)
 }
+
+func RandomNumber(from int64, to int64) int64 {
+	return RandomInt(from, to)
+}

@@ -21,20 +21,18 @@ type CreateFolderParams struct {
 
 const createFolder = `-- name: CreateFolder :one
 INSERT INTO folder (
-	id,
 	owner,
 	parent,
 	name,
-	created_at,
 	path,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7
+	$1, $2, $3, $4, $5
 ) RETURNING id, owner, parent, name, created_at, path, tag
 `
 
 func (q *Queries) CreateFolder(ctx context.Context, arg CreateFolderParams) (Folder, error) {
-	row := q.db.QueryRowContext(ctx, createFolder, arg.Id, arg.Owner, arg.Parent, arg.Name, time.Now(), arg.Path, arg.Tag)
+	row := q.db.QueryRowContext(ctx, createFolder, arg.Owner, arg.Parent, arg.Name, arg.Path, arg.Tag)
 
 	var i Folder
 	err := row.Scan(

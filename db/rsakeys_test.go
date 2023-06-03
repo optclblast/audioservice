@@ -8,10 +8,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateRSAkey(t *testing.T) {
+func createRandomRSAKey(t *testing.T) RSAKey {
+	params := ListAccountsParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	accs, err := testQueries.ListAccounts(context.Background(), params)
+	require.NoError(t, err)
+	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
+
 	arg := CreateRSAKeyParams{
-		Id:    utils.RandomID(),
-		Owner: 5328,
+		Owner: owner.Id,
 		Key:   utils.RandomLogin(),
 	}
 
@@ -21,21 +28,32 @@ func TestCreateRSAkey(t *testing.T) {
 
 	require.Equal(t, arg.Owner, key.Owner)
 	require.Equal(t, arg.Key, key.Key)
+	return key
+}
+func TestCreateRSAkey(t *testing.T) {
+	createRandomRSAKey(t)
 }
 
 func TestGetRSAKey(t *testing.T) {
-	var owner int64 = 5328
-	key, err := testQueries.GetRSAKey(context.Background(), owner)
+	rkey := createRandomRSAKey(t)
+	key, err := testQueries.GetRSAKey(context.Background(), rkey.Owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, key)
-	require.Equal(t, "appycdlbkgtdpqk", key.Key)
+	require.Equal(t, rkey.Key, key.Key)
 }
 
 func TestUpdateRSAKey(t *testing.T) {
-	var id int64 = 5328
+	params := ListAccountsParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	accs, err := testQueries.ListAccounts(context.Background(), params)
+	require.NoError(t, err)
+	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
+
 	arg := UpdateRSAKeyParams{
-		Owner: id,
-		Key:   "12345678901234567890",
+		Owner: owner.Id,
+		Key:   utils.RandomLogin(),
 	}
 
 	key, err := testQueries.UpdateRSAKey(context.Background(), arg)
@@ -47,8 +65,13 @@ func TestUpdateRSAKey(t *testing.T) {
 }
 
 func TestDeleteRSAKey(t *testing.T) {
-	var id int64 = 1098
+	paramsA := ListAccountsParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	accs, _ := testQueries.ListAccounts(context.Background(), paramsA)
+	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
 
-	err := testQueries.DeleteRSAKey(context.Background(), id)
+	err := testQueries.DeleteRSAKey(context.Background(), owner.Id)
 	require.NoError(t, err)
 }

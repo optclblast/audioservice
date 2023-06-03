@@ -10,23 +10,21 @@ import (
 
 // operations with files
 type CreateRSAKeyParams struct {
-	Id    int64  `json:"id"`
 	Owner int64  `json:"owner"`
 	Key   string `json:"key"`
 }
 
 const createRSAKey = `-- name: CreateRSAKey :one
 INSERT INTO rsakeys (
-	id,
 	owner,
 	key
 ) VALUES (
-	$1, $2, $3
+	$1, $2
 ) RETURNING id, owner, key
 `
 
 func (q *Queries) CreateRSAKey(ctx context.Context, arg CreateRSAKeyParams) (RSAKey, error) {
-	row := q.db.QueryRowContext(ctx, createRSAKey, arg.Id, arg.Owner, arg.Key)
+	row := q.db.QueryRowContext(ctx, createRSAKey, arg.Owner, arg.Key)
 	var i RSAKey
 	err := row.Scan(
 		&i.Id,

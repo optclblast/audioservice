@@ -10,7 +10,6 @@ import (
 
 // operations with files
 type CreateFileParams struct {
-	Id     int64  `json:"id"`
 	Owner  int64  `json:"owner"`
 	Parent int64  `json:"parent"`
 	Name   string `json:"name"`
@@ -20,20 +19,18 @@ type CreateFileParams struct {
 
 const createFile = `-- name: CreateFile :one
 INSERT INTO file (
-	id,
 	owner,
 	parent,
 	name,
-	created_at,
 	path,
 	tag
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7
+	$1, $2, $3, $4, $5
 ) RETURNING id, owner, parent, name, created_at, path, tag
 `
 
 func (q *Queries) CreateFile(ctx context.Context, arg CreateFileParams) (File, error) {
-	row := q.db.QueryRowContext(ctx, createFile, arg.Id, arg.Owner, arg.Parent, arg.Name, time.Now(), arg.Path, arg.Tag)
+	row := q.db.QueryRowContext(ctx, createFile, arg.Owner, arg.Parent, arg.Name, arg.Path, arg.Tag)
 	var i File
 	err := row.Scan(
 		&i.Id,

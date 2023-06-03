@@ -9,10 +9,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateFolder(t *testing.T) {
+func createRandomFolder(t *testing.T) Folder {
+	params := ListAccountsParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	accs, _ := testQueries.ListAccounts(context.Background(), params)
+	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
+
 	arg := CreateFolderParams{
-		Id:     utils.RandomID(),
-		Owner:  6845,
+		Owner:  owner.Id,
 		Parent: sql.NullInt64{Valid: false},
 		Name:   utils.RandomLogin(),
 		Path:   utils.RandomLogin(),
@@ -23,7 +29,6 @@ func TestCreateFolder(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, folder)
 
-	require.Equal(t, arg.Id, folder.Id)
 	require.Equal(t, arg.Owner, folder.Owner)
 	require.Equal(t, arg.Name, folder.Name)
 	require.Equal(t, arg.Path, folder.Path)
@@ -31,37 +36,43 @@ func TestCreateFolder(t *testing.T) {
 
 	require.NotZero(t, folder.Id)
 	require.NotZero(t, folder.CreatedAt)
+	return folder
+}
+
+func TestCreateFolder(t *testing.T) {
+	createRandomFolder(t)
 }
 
 func TestGetFolder(t *testing.T) {
-	var id int64 = 3373
-	var owner int64 = 6845
-	folder, err := testQueries.GetFolder(context.Background(), id, owner)
+	randFolder := createRandomFolder(t)
+
+	folder, err := testQueries.GetFolder(context.Background(), randFolder.Id, randFolder.Owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, folder)
-	require.Equal(t, id, folder.Id)
-	require.Equal(t, owner, folder.Owner)
+	require.Equal(t, randFolder.Id, folder.Id)
+	require.Equal(t, randFolder.Owner, folder.Owner)
 	require.NotZero(t, folder.Id)
 	require.NotZero(t, folder.CreatedAt)
 }
 
 func TestListFolder(t *testing.T) {
-	var owner int64 = 6845
+	randFolder := createRandomFolder(t)
 
 	arg := ListFoldersParams{
 		Limit:  int32(utils.RandomInt(1, 3)),
 		Offset: int32(utils.RandomInt(1, 2)),
 	}
 
-	folders, err := testQueries.ListFolders(context.Background(), arg, owner)
+	folders, err := testQueries.ListFolders(context.Background(), arg, randFolder.Owner)
 	require.NoError(t, err)
 	require.NotEmpty(t, folders)
 }
 
 func TestUpdateFolder(t *testing.T) {
-	var id int64 = 606
+	randFolder := createRandomFolder(t)
+
 	arg := UpdateFolderParams{
-		Id:   id,
+		Id:   randFolder.Id,
 		Name: "PAPICH",
 		Path: utils.RandomLogin(),
 		Tag:  utils.RandomLogin(),
@@ -80,8 +91,27 @@ func TestUpdateFolder(t *testing.T) {
 }
 
 func TestDeleteFolder(t *testing.T) {
-	var id int64 = 418
+	paramsA := ListAccountsParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	accs, _ := testQueries.ListAccounts(context.Background(), paramsA)
+	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
 
-	err := testQueries.DeleteFolder(context.Background(), id)
+	params := ListFoldersParams{
+		Limit:  50,
+		Offset: 0,
+	}
+	var folders []Folder
+	for {
+		var err error
+		folders, err = testQueries.ListFolders(context.Background(), params, owner.Id)
+		if err == nil && len(folders) > 0 {
+			break
+		}
+	}
+	folder := accs[utils.RandomNumber(0, int64(len(folders)-1))]
+
+	err := testQueries.DeleteFolder(context.Background(), folder.Id)
 	require.NoError(t, err)
 }

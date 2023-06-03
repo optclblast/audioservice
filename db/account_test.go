@@ -8,9 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateAccount(t *testing.T) {
+func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
-		Id:       utils.RandomID(),
 		Login:    utils.RandomLogin(),
 		Password: utils.RandomPassword(),
 	}
@@ -18,24 +17,26 @@ func TestCreateAccount(t *testing.T) {
 	account, err := testQueries.CreateAccount(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
-
-	require.Equal(t, arg.Id, account.Id)
 	require.Equal(t, arg.Login, account.Login)
 	require.Equal(t, arg.Password, account.Password)
 
 	require.NotZero(t, account.Id)
-	require.NotZero(t, account.CreatedAt)
+
+	return account
+}
+func TestCreateAccount(t *testing.T) {
+	createRandomAccount(t)
 }
 
 func TestGetAccount(t *testing.T) {
-	var id int64 = 8228
-	account, err := testQueries.GetAccount(context.Background(), id)
+	createdAcc := createRandomAccount(t)
+	account, err := testQueries.GetAccount(context.Background(), createdAcc.Id)
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
-	require.Equal(t, id, account.Id)
-	require.Equal(t, "gcpauijgsnxfyze", account.Login)
-	require.Equal(t, "snpfifyhqbnunlhkyiirtggtw", account.Password)
+	require.Equal(t, createdAcc.Id, account.Id)
+	require.Equal(t, createdAcc.Login, account.Login)
+	require.Equal(t, createdAcc.Password, account.Password)
 }
 
 func TestListAccounts(t *testing.T) {

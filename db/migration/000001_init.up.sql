@@ -1,5 +1,5 @@
 CREATE TABLE "account" (
-  "id" bigserial UNIQUE PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "login" varchar NOT NULL,
   "password" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT 'now()'
