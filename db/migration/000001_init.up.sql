@@ -1,60 +1,53 @@
-CREATE TABLE "account" (
-  "id" bigserial PRIMARY KEY,
+CREATE TABLE "Users" (
+  "id" bigserial UNIQUE PRIMARY KEY NOT NULL,
   "login" varchar NOT NULL,
-  "password" varchar NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT 'now()'
+  "password" varchar NOT NULL
 );
 
-CREATE TABLE "rsakeys" (
-  "id" bigserial UNIQUE PRIMARY KEY,
-  "owner" bigserial,
-  "key" varchar
-);
-
-CREATE TABLE "folder" (
+CREATE TABLE "Authors" (
   "id" bigserial PRIMARY KEY,
-  "owner" bigserial,
-  "parent" bigint,
-  "name" varchar NOT NULL DEFAULT 'New Folder',
-  "created_at" timestamp NOT NULL DEFAULT 'now()',
-  "path" varchar NOT NULL,
-  "tag" varchar
+  "name" varchar NOT NULL,
+  "bio" varchar
 );
 
-CREATE TABLE "file" (
+CREATE TABLE "Collections" (
   "id" bigserial PRIMARY KEY,
-  "owner" bigserial,
-  "parent" bigserial,
-  "name" varchar NOT NULL DEFAULT 'New File',
-  "created_at" timestamp NOT NULL DEFAULT 'now()',
-  "path" varchar NOT NULL,
-  "tag" varchar
+  "name" varchar NOT NULL,
+  "authon" bigint NOT NULL,
+  "ft_authors" bigint,
+  "type" varchar NOT NULL DEFAULT 'Album',
+  "discription" varchar,
+  "lenght" bigint,
+  "label" varchar NOT NULL,
+  "date" timestamp NOT NULL DEFAULT 'now()'
 );
 
-CREATE INDEX ON "account" ("id");
+CREATE TABLE "Tracks" (
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "authon" bigint NOT NULL,
+  "ft_authors" bigint,
+  "album" bigint,
+  "location" varchar NOT NULL
+);
 
-CREATE INDEX ON "rsakeys" ("owner");
+CREATE TABLE "Playlists" (
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "owner" bigint NOT NULL,
+  "discription" varchar,
+  "lenght" bigint,
+  "date" timestamp NOT NULL DEFAULT 'now()'
+);
 
-CREATE INDEX ON "folder" ("id");
+CREATE TABLE "UsersLikedTracks" (
+  "id" bigserial PRIMARY KEY,
+  "user" bigserial,
+  "tracks" bigserial
+);
 
-CREATE INDEX ON "folder" ("owner");
-
-CREATE INDEX ON "folder" ("tag");
-
-CREATE INDEX ON "file" ("id");
-
-CREATE INDEX ON "file" ("owner");
-
-CREATE INDEX ON "file" ("parent");
-
-CREATE INDEX ON "file" ("tag");
-
-ALTER TABLE "rsakeys" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
-
-ALTER TABLE "folder" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
-
-ALTER TABLE "folder" ADD FOREIGN KEY ("parent") REFERENCES "folder" ("id");
-
-ALTER TABLE "file" ADD FOREIGN KEY ("owner") REFERENCES "account" ("id");
-
-ALTER TABLE "file" ADD FOREIGN KEY ("parent") REFERENCES "folder" ("id");
+CREATE TABLE "UsersLikedCollections" (
+  "id" bigserial PRIMARY KEY,
+  "user" bigserial,
+  "collections" bigserial
+);

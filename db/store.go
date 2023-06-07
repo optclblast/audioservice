@@ -49,7 +49,6 @@ type RegisterAccountTxResult struct {
 
 func (store *Store) TransferTx(ctx context.Context, arg RegisterAccountTxParams) (RegisterAccountTxResult, error) {
 	var result RegisterAccountTxResult
-
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
 		result.Account, err = q.CreateAccount(ctx, CreateAccountParams{
