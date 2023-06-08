@@ -6,34 +6,32 @@ import (
 )
 
 type Account struct {
-	Id        int64     `json:"id"`
-	Login     string    `json:"login"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"createdat"`
+	Id       int64  `json:"id"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
-type RSAKey struct {
-	Id    int64  `json:"id"`
-	Owner int64  `json:"owner"`
-	Key   string `json:"key"`
+type Artist struct {
+	Id   int64  `json:"id"`
+	Name int64  `json:"name"`
+	Bio  string `json:"bio"`
 }
 
-type Folder struct {
+type Collection struct {
+	Id          int64         `json:"id"`
+	Name        string        `json:"name"`
+	Author      int64         `json:"author"`
+	FtAuthors   sql.NullInt64 `json:"ft_authors"`
+	Type        string        `json:"type"`
+	Discription string        `json:"discription"`
+	Lenght      string        `json:"lenght"`
+	Label       string        `json:"label"`
+	Date        time.Time     `json:"date"`
+}
+
+type Track struct {
 	Id        int64         `json:"id"`
-	Owner     int64         `json:"owner"`
-	Parent    sql.NullInt64 `json:"parent"`
 	Name      string        `json:"name"`
-	CreatedAt time.Time     `json:"createdat"`
-	Path      string        `json:"content"`
-	Tag       string        `json:"tag"`
-}
-
-type File struct {
-	Id        int64         `json:"id"`
-	Owner     int64         `json:"owner"`
-	Parent    sql.NullInt64 `json:"parent"`
-	Name      string        `json:"name"`
-	CreatedAt time.Time     `json:"createdat"`
-	Path      string        `json:"content"`
-	Tag       string        `json:"tag"`
+	Author    int64         `json:"author"`
+	FtAuthors sql.NullInt64 `json:"ft_authors"`
 }
