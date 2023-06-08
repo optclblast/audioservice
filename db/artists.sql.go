@@ -9,21 +9,20 @@ import (
 )
 
 type CreateArtistParams struct {
-	Id   int64  `json:"id"`
 	Name int64  `json:"name"`
 	Bio  string `json:"bio"`
 }
 
 const createArtist = `-- name: CreateArtist :one
 INSERT INTO Artists (
-	id, name, bio
+	name, bio
 ) VALUES (
-	$1, $2, $3
-) RETURNING id, name, bio
+	$1, $2
+) RETURNING name, bio
 `
 
 func (q *Queries) CreateArtist(ctx context.Context, arg CreateArtistParams) (Artist, error) {
-	row := q.db.QueryRowContext(ctx, createArtist, arg.Id, arg.Name, arg.Bio)
+	row := q.db.QueryRowContext(ctx, createArtist, arg.Name, arg.Bio)
 	var i Artist
 	err := row.Scan(
 		&i.Id,

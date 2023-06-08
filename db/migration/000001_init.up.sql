@@ -1,10 +1,10 @@
-CREATE TABLE "Users" (
+CREATE TABLE "Accounts" (
   "id" bigserial UNIQUE PRIMARY KEY NOT NULL,
   "login" varchar NOT NULL,
   "password" varchar NOT NULL
 );
 
-CREATE TABLE "Authors" (
+CREATE TABLE "Artist" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
   "bio" varchar
