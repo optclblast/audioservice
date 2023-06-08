@@ -13,15 +13,13 @@ type CreateAccountParams struct {
 	Password string `json:"password"`
 }
 
-//user data operations
-
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO account (
+INSERT INTO Accounts (
 	login,
 	password
 ) VALUES (
 	$1, $2
-) RETURNING id, login, password, created_at
+) RETURNING id, login, password
 `
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
@@ -31,7 +29,6 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.Id,
 		&i.Login,
 		&i.Password,
-		&i.CreatedAt,
 	)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
@@ -45,7 +42,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 }
 
 const getAccount = `--name: GetAccount :one
-SELECT id, login, password, created_at FROM account
+SELECT id, login, password FROM Accounts
 WHERE id = $1 LIMIT 1
 `
 
@@ -56,7 +53,6 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 		&i.Id,
 		&i.Login,
 		&i.Password,
-		&i.CreatedAt,
 	)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
@@ -70,7 +66,7 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const listAccounts = `--name: ListAccounts :many
-SELECT id, login, password, created_at FROM account
+SELECT id, login, password FROM Accounts
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -101,7 +97,6 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 			&i.Id,
 			&i.Login,
 			&i.Password,
-			&i.CreatedAt,
 		); err != nil {
 			logger.Logger(logger.LogEntry{
 				DateTime: time.Now(),
@@ -135,10 +130,10 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 }
 
 const updateAccount = `--name: UpdateAccount :one
-UPDATE account
+UPDATE Accounts
 SET login = $2
 WHERE id = &1
-RETURNING id, login, created_at
+RETURNING id, login
 `
 
 type UpdateAccountParams struct {
@@ -154,7 +149,6 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 		&i.Id,
 		&i.Login,
 		&i.Password,
-		&i.CreatedAt,
 	)
 
 	if err != nil {
@@ -170,7 +164,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 }
 
 const deleteAccount = `--name: DeleteAccount :exec
-DELETE FROM account
+DELETE FROM Accounts
 WHERE id = $1
 `
 
