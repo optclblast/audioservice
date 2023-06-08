@@ -34,4 +34,5 @@ type Track struct {
 	Name      string        `json:"name"`
 	Author    int64         `json:"author"`
 	FtAuthors sql.NullInt64 `json:"ft_authors"`
+	Type      string
 }
