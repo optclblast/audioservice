@@ -4,7 +4,7 @@ CREATE TABLE "Accounts" (
   "password" varchar NOT NULL
 );
 
-CREATE TABLE "Artist" (
+CREATE TABLE "Artists" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
   "bio" varchar

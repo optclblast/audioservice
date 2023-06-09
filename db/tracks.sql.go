@@ -8,7 +8,6 @@ import (
 	"github.com/optclblast/filetagger/logger"
 )
 
-// operations with files
 type CreateRSAKeyParams struct {
 	Owner int64  `json:"owner"`
 	Key   string `json:"key"`
