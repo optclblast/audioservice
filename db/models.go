@@ -45,6 +45,7 @@ type Playlist struct {
 	Discription string    `json:"discription"`
 	Lenght      string    `json:"lenght"`
 	Date        time.Time `json:"date"`
+	UploadDate  time.Time `json:"upload_date"`
 }
 
 type UserLikedTracks struct {
