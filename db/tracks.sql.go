@@ -11,11 +11,11 @@ import (
 
 type CreateTrackParams struct {
 	Name      string        `json:"name"`
-	Author    int64         `json:"author"`
+	Artist    int64         `json:"author"`
 	FtAuthors sql.NullInt64 `json:"ft_authors"`
 	Album     string        `json:"album"`
 	Location  string        `json:"location"`
-	Date        time.Time `json:"date"`
+	Date      time.Time     `json:"date"`
 }
 
 const createTrack = `-- name: CreateTrack :one
@@ -27,7 +27,7 @@ INSERT INTO Tracks (
 `
 
 func (q *Queries) CreateTrack(ctx context.Context, arg CreateTrackParams) (Track, error) {
-	row := q.db.QueryRowContext(ctx, createTrack, arg.)
+	row := q.db.QueryRowContext(ctx, createTrack, arg.Name, arg.Artist, arg.FtArt)
 	var i Track
 	err := row.Scan(
 		&i.Id,
