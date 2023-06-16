@@ -8,118 +8,76 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomFile(t *testing.T) File {
-	params := ListAccountsParams{
-		Limit:  50,
-		Offset: 0,
-	}
-	accs, err := testQueries.ListAccounts(context.Background(), params)
-	require.NoError(t, err)
-	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
-
-	dirParams := ListFoldersParams{
-		Limit:  50,
-		Offset: 0,
-	}
-	dirs, err := testQueries.ListFolders(context.Background(), dirParams, owner.Id)
-	require.NotEmpty(t, dirs)
-	require.NoError(t, err)
-	dir := dirs[utils.RandomNumber(0, int64(len(dirs)-1))]
-	require.Equal(t, dir.Owner, owner.Id)
-
-	arg := CreateFileParams{
-		Owner:  owner.Id,
-		Parent: dir.Id,
-		Name:   utils.RandomLogin(),
-		Path:   utils.RandomLogin(),
-		Tag:    utils.RandomLogin(),
+func createRandomArtist(t *testing.T) Artist {
+	arg := CreateArtistParams{
+		Name: utils.RandomLogin(),
+		Bio:  "some bio",
 	}
 
-	file, err := testQueries.CreateFile(context.Background(), arg)
+	artist, err := testQueries.CreateArtist(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, file)
+	require.NotEmpty(t, artist)
 
-	require.Equal(t, arg.Owner, file.Owner)
-	require.Equal(t, arg.Name, file.Name)
-	require.Equal(t, arg.Path, file.Path)
-	require.Equal(t, arg.Tag, file.Tag)
+	require.Equal(t, arg.Bio, artist.Bio)
+	require.Equal(t, arg.Name, artist.Name)
 
-	require.NotZero(t, file.Id)
-	require.NotZero(t, file.CreatedAt)
+	require.NotZero(t, artist.Id)
 
-	return file
+	return artist
 }
-func TestCreateFile(t *testing.T) {
-	createRandomFile(t)
+func TestCreateArtist(t *testing.T) {
+	createRandomArtist(t)
 }
 
-func TestGetFile(t *testing.T) {
-	randFile := createRandomFile(t)
-	folder, err := testQueries.GetFile(context.Background(), randFile.Id, randFile.Owner)
+func TestGetArtist(t *testing.T) {
+	randArtist := createRandomArtist(t)
+	artist, err := testQueries.GetArtist(context.Background(), randArtist.Id)
 	require.NoError(t, err)
-	require.NotEmpty(t, folder)
-	require.Equal(t, randFile.Id, folder.Id)
-	require.Equal(t, randFile.Owner, folder.Owner)
-	require.NotZero(t, folder.Id)
+	require.NotEmpty(t, artist)
+	require.Equal(t, randArtist.Id, artist.Id)
+	require.Equal(t, randArtist.Name, artist.Name)
+	require.Equal(t, randArtist.Bio, artist.Bio)
+	require.NotZero(t, artist.Id)
 }
 
-func TestListFile(t *testing.T) {
-	randFile := createRandomFile(t)
+func TestListArtists(t *testing.T) {
+	randArtist := createRandomArtist(t)
 
-	arg := ListFilesParams{
+	arg := ListArtistsParams{
+		Name:   randArtist.Name,
 		Limit:  int32(utils.RandomInt(1, 5)),
 		Offset: 0,
 	}
 
-	files, err := testQueries.ListFiles(context.Background(), arg, randFile.Owner)
+	Artists, err := testQueries.ListArtists(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, files)
+	require.NotEmpty(t, Artists)
 }
 
-func TestUpdateFile(t *testing.T) {
-	randFile := createRandomFile(t)
+func TestUpdateArtist(t *testing.T) {
+	randArtist := createRandomArtist(t)
 
-	arg := UpdateFileParams{
-		Id:   randFile.Id,
-		Name: "random power",
-		Path: utils.RandomLogin(),
-		Tag:  utils.RandomLogin(),
+	arg := UpdateArtistParams{
+		Id:   randArtist.Id,
+		Name: "NEW_NAME",
+		Bio:  utils.RandomLogin(),
 	}
 
-	file, err := testQueries.UpdateFile(context.Background(), arg)
+	Artist, err := testQueries.UpdateArtist(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, file)
+	require.NotEmpty(t, Artist)
 
-	require.Equal(t, arg.Id, file.Id)
-	require.Equal(t, arg.Name, file.Name)
-	require.Equal(t, arg.Path, file.Path)
-	require.Equal(t, arg.Tag, file.Tag)
+	require.Equal(t, arg.Id, Artist.Id)
+	require.Equal(t, arg.Name, Artist.Name)
+	require.Equal(t, arg.Bio, Artist.Bio)
 
-	require.NotZero(t, file.Id)
+	require.NotZero(t, Artist.Id)
 }
 
-func TestDeleteFile(t *testing.T) {
-	paramsA := ListAccountsParams{
-		Limit:  50,
-		Offset: 0,
-	}
-	accs, _ := testQueries.ListAccounts(context.Background(), paramsA)
-	owner := accs[utils.RandomNumber(0, int64(len(accs)-1))]
+func TestDeleteArtist(t *testing.T) {
+	randArtist := createRandomArtist(t)
+	artist, err := testQueries.GetArtist(context.Background(), randArtist.Id)
 
-	params := ListFilesParams{
-		Limit:  50,
-		Offset: 0,
-	}
-	var files []File
-	for {
-		var err error
-		files, err = testQueries.ListFiles(context.Background(), params, owner.Id)
-		if err == nil && len(files) > 0 {
-			break
-		}
-	}
-	file := accs[utils.RandomNumber(0, int64(len(files)-1))]
-
-	err := testQueries.DeleteFile(context.Background(), file.Id)
+	err = testQueries.DeleteArtist(context.Background(), artist.Id)
 	require.NoError(t, err)
 }

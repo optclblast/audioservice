@@ -9,7 +9,7 @@ import (
 )
 
 type CreateArtistParams struct {
-	Name int64  `json:"name"`
+	Name string `json:"name"`
 	Bio  string `json:"bio"`
 }
 
@@ -45,8 +45,8 @@ SELECT id, name, bio FROM Artists
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetArtist(ctx context.Context, id int64, owner int64) (Artist, error) {
-	row := q.db.QueryRowContext(ctx, getArtist, id, owner)
+func (q *Queries) GetArtist(ctx context.Context, id int64) (Artist, error) {
+	row := q.db.QueryRowContext(ctx, getArtist, id)
 	var i Artist
 	err := row.Scan(
 		&i.Id,
@@ -73,12 +73,13 @@ OFFSET $2
 `
 
 type ListArtistsParams struct {
-	Limit  int32 `json:"id"`
-	Offset int32 `json:"offset"`
+	Name   string `json:"name"`
+	Limit  int32  `json:"id"`
+	Offset int32  `json:"offset"`
 }
 
-func (q *Queries) ListArtists(ctx context.Context, arg ListArtistsParams, name string) ([]Artist, error) {
-	rows, err := q.db.QueryContext(ctx, listArtists, arg.Limit, arg.Offset, name)
+func (q *Queries) ListArtists(ctx context.Context, arg ListArtistsParams) ([]Artist, error) {
+	rows, err := q.db.QueryContext(ctx, listArtists, arg.Limit, arg.Offset, arg.Name)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
 			DateTime: time.Now(),
@@ -139,7 +140,7 @@ RETURNING id, name, bio
 
 type UpdateArtistParams struct {
 	Id   int64  `json:"id"`
-	Name int64  `json:"name"`
+	Name string `json:"name"`
 	Bio  string `json:"bio"`
 }
 

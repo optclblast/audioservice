@@ -1,10 +1,11 @@
-module github.com/optclblast/filetagger
+module github.com/optclblast/audioservice
 
 go 1.20
 
 require (
-	github.com/gorilla/mux v1.8.0
+	github.com/gin-gonic/gin v1.9.1
 	github.com/lib/pq v1.10.9
+	github.com/optclblast/filetagger v0.0.0-20230612114536-94447aba0d4b
 	github.com/stretchr/testify v1.8.3
 )
 
@@ -14,7 +15,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.14.1 // indirect

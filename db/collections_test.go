@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/optclblast/filetagger/utils"
+	"github.com/optclblast/audioservice/utils"
 	"github.com/stretchr/testify/require"
 )
 

@@ -13,7 +13,7 @@ type Account struct {
 
 type Artist struct {
 	Id   int64  `json:"id"`
-	Name int64  `json:"name"`
+	Name string `json:"name"`
 	Bio  string `json:"bio"`
 }
 

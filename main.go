@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/optclblast/filetagger/api"
-	"github.com/optclblast/filetagger/auth"
-	"github.com/optclblast/filetagger/logger"
+	"github.com/optclblast/audioservice/api"
+	"github.com/optclblast/audioservice/auth"
+	"github.com/optclblast/audioservice/logger"
 )
 
 const (
