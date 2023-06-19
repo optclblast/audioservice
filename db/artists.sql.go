@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/optclblast/filetagger/logger"
+	"github.com/optclblast/audioservice/logger"
 )
 
 type CreateArtistParams struct {

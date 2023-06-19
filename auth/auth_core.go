@@ -10,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/optclblast/filetagger/logger"
+	"github.com/optclblast/audioservice/logger"
 )
 
 const (

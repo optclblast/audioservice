@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/optclblast/filetagger/db"
+	"github.com/optclblast/audioservice/db"
 )
 
 type Server struct {
