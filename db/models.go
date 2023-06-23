@@ -34,7 +34,7 @@ type Track struct {
 	Name      string        `json:"name"`
 	Artist    int64         `json:"artist"`
 	FtArtists sql.NullInt64 `json:"ft_artists"`
-	Album     string        `json:"album"`
+	Album     int64         `json:"album"`
 	Location  string        `json:"location"`
 }
 
@@ -49,16 +49,16 @@ type Playlist struct {
 }
 
 type UserLikedTracks struct {
-	User   int64  `json:"user"`
-	Tracks string `json:"tracks"`
+	User   int64 `json:"user"`
+	Tracks int64 `json:"tracks"`
 }
 
 type UserLikedCollections struct {
-	User        int64  `json:"user"`
-	Collections string `json:"collections"`
+	User        int64 `json:"user"`
+	Collections int64 `json:"collections"`
 }
 
 type UserLikesPlaylists struct {
-	User     int64  `json:"user"`
-	Playlist string `json:"playlist"`
+	User     int64 `json:"user"`
+	Playlist int64 `json:"playlist"`
 }

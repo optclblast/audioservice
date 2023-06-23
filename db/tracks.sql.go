@@ -11,28 +11,30 @@ import (
 
 type CreateTrackParams struct {
 	Name      string        `json:"name"`
-	Artist    int64         `json:"author"`
-	FtAuthors sql.NullInt64 `json:"ft_authors"`
-	Album     string        `json:"album"`
+	Artist    int64         `json:"artist"`
+	FtArtists sql.NullInt64 `json:"ft_artists"`
+	Album     int64         `json:"album"`
 	Location  string        `json:"location"`
-	Date      time.Time     `json:"date"`
 }
 
 const createTrack = `-- name: CreateTrack :one
 INSERT INTO Tracks (
-	name, owner, discription, lenght, date
+	name, artist, ft_artists, album, location
 ) VALUES (
-	$1, $2, $3, $4, $5
-) RETURNING id, name, owner, discription, lenght, date
+	$1, $2, $3, $4, $5, $6
+) RETURNING id, name, artist, ft_artists, album, location
 `
 
 func (q *Queries) CreateTrack(ctx context.Context, arg CreateTrackParams) (Track, error) {
-	row := q.db.QueryRowContext(ctx, createTrack, arg.Name, arg.Artist, arg.FtArt)
+	row := q.db.QueryRowContext(ctx, createTrack, arg.Name, arg.Artist, arg.Artist)
 	var i Track
 	err := row.Scan(
 		&i.Id,
-		&i.Owner,
-		&i.Key,
+		&i.Name,
+		&i.Artist,
+		&i.FtArtists,
+		&i.Album,
+		&i.Location,
 	)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
@@ -56,7 +58,12 @@ func (q *Queries) GetTrack(ctx context.Context, owner int64) (Track, error) {
 	row := q.db.QueryRowContext(ctx, getTrack, owner)
 	var i Track
 	err := row.Scan(
-		&i.Key,
+		&i.Id,
+		&i.Name,
+		&i.Artist,
+		&i.FtArtists,
+		&i.Album,
+		&i.Location,
 	)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
@@ -69,7 +76,7 @@ func (q *Queries) GetTrack(ctx context.Context, owner int64) (Track, error) {
 	return i, err
 }
 
-const listCollections = `--name: ListCollections :many
+const listTracks = `--name: ListCollections :many
 SELECT id, name, author, ft_authors, type, discription, lenght, label, date FROM Collections
 WHERE author = $3
 ORDER BY id
@@ -83,7 +90,7 @@ type ListTracksParams struct {
 }
 
 func (q *Queries) ListTracks(ctx context.Context, arg ListTracksParams, author int64) ([]Track, error) {
-	rows, err := q.db.QueryContext(ctx, listCollections, arg.Limit, arg.Offset, author)
+	rows, err := q.db.QueryContext(ctx, listTracks, arg.Limit, arg.Offset, author)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
 			DateTime: time.Now(),
@@ -96,17 +103,14 @@ func (q *Queries) ListTracks(ctx context.Context, arg ListTracksParams, author i
 
 	var items []Track
 	for rows.Next() {
-		var i Collection
+		var i Track
 		if err := rows.Scan(
 			&i.Id,
 			&i.Name,
-			&i.Author,
-			&i.FtAuthors,
-			&i.Type,
-			&i.Discription,
-			&i.Lenght,
-			&i.Label,
-			&i.Date,
+			&i.Artist,
+			&i.FtArtists,
+			&i.Album,
+			&i.Location,
 		); err != nil {
 			logger.Logger(logger.LogEntry{
 				DateTime: time.Now(),
@@ -157,8 +161,12 @@ func (q *Queries) UpdateTrack(ctx context.Context, arg UpdateTrackParams) (Track
 	row := q.db.QueryRowContext(ctx, updateTrack, arg.Owner, arg.Key)
 	var i Track
 	err := row.Scan(
-		&i.Owner,
-		&i.Key,
+		&i.Id,
+		&i.Name,
+		&i.Artist,
+		&i.FtArtists,
+		&i.Album,
+		&i.Location,
 	)
 	if err != nil {
 		logger.Logger(logger.LogEntry{
